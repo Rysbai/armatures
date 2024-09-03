@@ -20,7 +20,7 @@ def _write_to_lira_file(f, layers, points):
         "\n",
     ])
 
-    # entities
+    # ENTITIES
     for layer in layers:
         lines = []
         for line in layer.lines:
@@ -36,7 +36,7 @@ def _write_to_lira_file(f, layers, points):
  
         f.writelines(lines)
  
-    # layers
+    # LAYERS
     f.writelines(['\n', ')(3/\n'])
     lines = []
     for layer in layers:
@@ -49,14 +49,13 @@ def _write_to_lira_file(f, layers, points):
 
     f.writelines(lines)
 
-    # Points
+    # POINTS
     f.writelines(['\n', ')(4/\n',])
     for point in points:
         f.writelines([f'{point.x} {point.y} {point.z}/\n'])
 
     # What is these?
     f.writelines([
-        '\n',
         '\n',
         '\n)(6/1 16 3 1 1/)',
         '\n(7/1 0.0 0.0 0.0 0.0 /)',

@@ -59,8 +59,8 @@ def point_factory(x: str, y: str, z: str) -> Point:
     if hash_ in POINTS:
         return POINTS[hash_]
 
-    p = Point(float(x), float(y), float(z), next(POINT_ID_SEQUENCE))
-    POINTS[hash_] = p 
+    p = Point(x, y, z, next(POINT_ID_SEQUENCE))
+    POINTS[hash_] = p
     return p
 
 
@@ -125,8 +125,8 @@ def parse_LWPOLYLINE(f: TextIO) -> LwPolyLine:
         y = read_code_value(f, ' 20')
         z = '0.00'
 
-        points.add(Point(x, y, z))
-    
+        points.add(Point(point_factory(x, y, z)))
+
     return LwPolyLine(points)
 
 
@@ -142,8 +142,6 @@ ENTITY_MAPS = {
     "LINE": "lines",
     "3DFACE": "faces",
     "LWPOLYLINE": "lwpolylines",
-
-    # TODO: Три угольный 3DFACE, лира код 42 <названия слоя> <и три координаты>
 }
 
 
@@ -217,7 +215,7 @@ def parse_dxf(filename: str):
                 layers = parse_entities(f)
 
     end = time.time()
-    _log.warning(f'Finished parsing in: {end - start}s')
+    _log.warning(f'Finished parsing in: {end - start:.4f} seconds')
 
     from lira_exporter import export_to_lira_csv
     export_to_lira_csv(layers, POINTS.values(), result_fname)
@@ -227,7 +225,7 @@ def parse_dxf(filename: str):
     #     json.dump(result, f)
 
     end = time.time()
-    _log.warning(f'Finished writing results in: {end - start}s')
+    _log.warning(f'Finished writing results and whole process in: {end - start:.4f} seconds')
 
     return layers
 
