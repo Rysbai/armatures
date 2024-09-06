@@ -75,17 +75,17 @@ def read_code_value(f: TextIO, code: str, parser: Callable = str) -> str:
 
 
 def read_codes(f: TextIO, codes: list[str], parser: Callable = str) -> list[str]:
-    return [read_code_value(f, code, parser) for code in codes]
+    return (read_code_value(f, code, parser) for code in codes)
 
 
 def parse_LINE(f: TextIO) -> Line:
-    a = point_factory(*read_codes(f, [" 10", " 20", " 30"]))
-    b = point_factory(*read_codes(f, [" 11", " 21", " 31"]))
+    a = point_factory(*read_codes(f, (" 10", " 20", " 30")))
+    b = point_factory(*read_codes(f, (" 11", " 21", " 31")))
     return Line(a, b)
 
 
 def parse_POINT(f: TextIO) -> Point:
-    return point_factory(*read_codes(f, [" 10", " 20", " 30"]))
+    return point_factory(*read_codes(f, (" 10", " 20", " 30")))
 
 
 def unique_points(*points):
@@ -102,10 +102,10 @@ def unique_points(*points):
 
 
 def parse_3DFACE(f: TextIO) -> ThreeDFace:
-    a = point_factory(*read_codes(f, [" 10", " 20", " 30"]))
-    b = point_factory(*read_codes(f, [" 11", " 21", " 31"]))
-    c = point_factory(*read_codes(f, [" 12", " 22", " 32"]))
-    d = point_factory(*read_codes(f, [" 13", " 23", " 33"]))
+    a = point_factory(*read_codes(f, (" 10", " 20", " 30")))
+    b = point_factory(*read_codes(f, (" 11", " 21", " 31")))
+    c = point_factory(*read_codes(f, (" 12", " 22", " 32")))
+    d = point_factory(*read_codes(f, (" 13", " 23", " 33")))
     return ThreeDFace(unique_points(a, b, d, c))
 
 
