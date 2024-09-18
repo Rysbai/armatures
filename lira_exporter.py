@@ -1,16 +1,24 @@
 
+DOF_MAP = {
+    'x': 1,
+    'y': 2,
+    'z': 3,
+    'fx': 4,
+    'fy': 5,
+    'fz': 6,
+}
 
-def unique_points(face):
-    points = []
-    ids = set()
-    for point in points:
-        if point.id in ids:
-            continue
+SEQUENCES = {}
 
-        points.append(point)
-        ids.add(point.id)
+def _counter(sequence_id: str, start=1, step=1):
+    SEQUENCES[sequence_id] = start
 
-    return points
+    while True:
+        yield SEQUENCES[sequence_id]
+        SEQUENCES[sequence_id] = SEQUENCES[sequence_id] + step
+
+
+POINT_ID_SEQUENCE = _counter("points")
 
 
 def _write_to_lira_file(f, layers, points):
@@ -40,6 +48,9 @@ def _write_to_lira_file(f, layers, points):
     f.writelines(['\n', ')(3/\n'])
     lines = []
     for layer in layers:
+        if len(layer.points) > 0:
+            continue
+
         attrs = " ".join([str(at) for at in layer.attrs])
         line = f'{layer.id} S0 3.06E6 {attrs}/\n' # For LINE
         if len(layer.attrs) == 1:  # 3DFACE
@@ -53,6 +64,21 @@ def _write_to_lira_file(f, layers, points):
     f.writelines(['\n', ')(4/\n',])
     for point in points:
         f.writelines([f'{point.x} {point.y} {point.z}/\n'])
+    
+
+    # DOFS
+    f.writelines(['\n', ')(5/\n'])
+    for layer in layers:
+        if not len(layer.points):
+            continue
+
+        lines = []
+        for point in layer.points:
+            dofs = ' '.join([str(DOF_MAP[d]) for d in layer.attrs])
+            lines.append(f'{point.id} ' + dofs + '/\n')
+
+        f.writelines(lines)
+
 
     # What is these?
     f.writelines([
